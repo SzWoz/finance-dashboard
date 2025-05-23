@@ -3,6 +3,11 @@ import { Budget } from "../models/Budget";
 
 const router = express.Router();
 
+router.get("/", async (_req, res) => {
+  const budgets = await Budget.find();
+  res.json(budgets);
+});
+
 // GET /api/budgets/:month
 router.get("/:month", async (req, res) => {
   const budget = await Budget.findOne({ month: req.params.month });

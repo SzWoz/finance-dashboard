@@ -11,8 +11,8 @@ router.get("/", async (_req, res) => {
 
 // POST /api/transactions
 router.post("/", async (req, res) => {
-  const { amount, description, type } = req.body;
-  const transaction = new Transaction({ amount, description, type });
+  const { amount, description, type, date } = req.body;
+  const transaction = new Transaction({ amount, description, type, date });
   await transaction.save();
   res.status(201).json(transaction);
 });
