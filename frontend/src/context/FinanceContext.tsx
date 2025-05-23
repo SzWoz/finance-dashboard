@@ -1,3 +1,4 @@
+import { apiGet } from "@/lib/api";
 import React, { createContext, useEffect, useReducer } from "react";
 
 export interface Transaction {
@@ -66,10 +67,10 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [state]);
 
   useEffect(() => {
-    fetch("/api/transactions")
+    apiGet("/api/transactions")
       .then((r) => r.json())
       .then((data) => dispatch({ type: "SET_TRANSACTIONS", payload: data }));
-    fetch("/api/budgets")
+    apiGet("/api/budgets")
       .then((r) => r.json())
       .then((data) => dispatch({ type: "SET_BUDGETS", payload: data }));
   }, []);

@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { apiPost } from "@/lib/api";
 
 const schema = z.object({
   description: z.string().min(1, "Wpisz opis"),
@@ -31,10 +32,10 @@ export const TransactionForm: React.FC = () => {
   const { dispatch } = useContext(FinanceContext);
 
   const onSubmit = async (data: FormData) => {
-    const res = await fetch("/api/transactions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...data, date: new Date() }),
+    const res = await apiPost("/api/transactions", {
+      ...data,
+      amount: Number(data.amount),
+      date: new Date().toISOString(),
     });
     const transaction: Transaction = await res.json();
     dispatch({ type: "ADD_TRANSACTION", payload: transaction });

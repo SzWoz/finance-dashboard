@@ -1,3 +1,5 @@
+import { API_URL } from "@/lib/api";
+
 export const urlBase64ToUint8Array = (base64String: string) => {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -12,12 +14,14 @@ export const urlBase64ToUint8Array = (base64String: string) => {
 export const subscribeUser = async () => {
   if ("serviceWorker" in navigator && "PushManager" in window) {
     const reg = await navigator.serviceWorker.ready;
-    const { publicKey } = await (await fetch("/api/vapid-public-key")).json();
+    const { publicKey } = await (
+      await fetch(`${API_URL}/api/vapid-public-key`)
+    ).json();
     const sub = await reg.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(publicKey),
     });
-    await fetch("/api/subscribe", {
+    await fetch(`${API_URL}/api/subscribe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(sub),
