@@ -1,4 +1,4 @@
-import { apiGet } from "@/lib/api";
+import { useApi } from "@/lib/api";
 import React, { createContext, useEffect, useReducer } from "react";
 
 export interface Transaction {
@@ -59,8 +59,23 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState, (init) => {
     const persisted = localStorage.getItem("finance-state");
-    return persisted ? JSON.parse(persisted) : init;
+    if (!persisted) return init;
+
+    try {
+      const parsed = JSON.parse(persisted);
+      return {
+        transactions: Array.isArray(parsed.transactions)
+          ? parsed.transactions
+          : [],
+        budgets: Array.isArray(parsed.budgets) ? parsed.budgets : [],
+      };
+    } catch (e) {
+      console.warn("Nieprawidłowe dane w localStorage:", e);
+      return init;
+    }
   });
+
+  const { apiGet } = useApi();
 
   useEffect(() => {
     localStorage.setItem("finance-state", JSON.stringify(state));
@@ -69,10 +84,20 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     apiGet("/api/transactions")
       .then((r) => r.json())
-      .then((data) => dispatch({ type: "SET_TRANSACTIONS", payload: data }));
+      .then((data) => {
+        if (Array.isArray(data)) {
+          dispatch({ type: "SET_TRANSACTIONS", payload: data });
+        } else {
+          console.warn("Niepoprawne dane transakcji:", data);
+        }
+      });
+
     apiGet("/api/budgets")
       .then((r) => r.json())
-      .then((data) => dispatch({ type: "SET_BUDGETS", payload: data }));
+      .then((data) => {
+        const budgets = Array.isArray(data) ? data : data ? [data] : [];
+        dispatch({ type: "SET_BUDGETS", payload: budgets });
+      });
   }, []);
 
   return (
