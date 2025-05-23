@@ -1,5 +1,13 @@
 import React, { useContext } from "react";
 import { FinanceContext } from "../context/FinanceContext";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 
 export const BudgetOverview: React.FC = () => {
   const { state } = useContext(FinanceContext);
@@ -7,6 +15,7 @@ export const BudgetOverview: React.FC = () => {
   const budget = state.budgets.find(
     (b) => b.month === now.getMonth() && b.year === now.getFullYear()
   );
+
   const spent = state.transactions
     .filter(
       (t) =>
@@ -15,21 +24,33 @@ export const BudgetOverview: React.FC = () => {
     .reduce((sum, t) => sum + t.amount, 0);
 
   if (!budget)
-    return <div className="card p-4">Brak budżetu na ten miesiąc.</div>;
+    return (
+      <Card>
+        <CardContent className="p-4 text-center text-sm text-muted-foreground">
+          Brak budżetu na bieżący miesiąc.
+        </CardContent>
+      </Card>
+    );
 
   const percentage = Math.min((spent / budget.total) * 100, 100);
   const remaining = budget.total - spent;
 
   return (
-    <div className="card p-4 space-y-2">
-      <h2 className="text-xl font-bold">Budżet: {budget.total} zł</h2>
-      <div className="w-full h-3 bg-gray-200 rounded">
-        <div
-          className="h-3 bg-green-500 rounded"
-          style={{ width: `${percentage}%` }}
-        />
-      </div>
-      <p>Pozostało: {remaining} zł</p>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Budżet miesięczny</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <CardDescription className="text-2xl font-semibold">
+          {spent.toFixed(2)} / {budget.total.toFixed(2)} zł
+        </CardDescription>
+
+        <Progress value={percentage} />
+
+        <p className="text-sm text-muted-foreground">
+          Pozostało: {remaining.toFixed(2)} zł
+        </p>
+      </CardContent>
+    </Card>
   );
 };

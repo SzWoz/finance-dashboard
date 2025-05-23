@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FinanceProvider } from "./context/FinanceContext";
 import { TransactionForm } from "./components/TransactionForm";
 import { TransactionList } from "./components/TransactionList";
 import { BudgetOverview } from "./components/BudgetOverview";
 import { Reports } from "./components/Reports";
+import { Layout } from "./components/Layout";
+import { Toaster } from "@/components/ui/sonner";
 import { subscribeUser } from "./utils/push";
 
 export const App: React.FC = () => {
@@ -15,26 +17,25 @@ export const App: React.FC = () => {
   return (
     <FinanceProvider>
       <BrowserRouter>
-        <nav className="flex gap-4 p-4 bg-gray-100">
-          <Link to="/">Dashboard</Link>
-          <Link to="/reports">Raporty</Link>
-        </nav>
-        <main className="p-4 space-y-4">
+        <Layout>
           <Routes>
             <Route
               path="/"
               element={
-                <>
-                  <TransactionForm />
-                  <BudgetOverview />
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                  <div className="space-y-6">
+                    <TransactionForm />
+                    <BudgetOverview />
+                  </div>
                   <TransactionList />
-                </>
+                </div>
               }
             />
             <Route path="/reports" element={<Reports />} />
           </Routes>
-        </main>
+        </Layout>
       </BrowserRouter>
+      <Toaster richColors closeButton position="bottom-center" />
     </FinanceProvider>
   );
 };
