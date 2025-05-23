@@ -1,22 +1,8 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-export interface IBudget {
-  month: number; // 0-11
-  year: number;
-  total: number;
-  categories: { name: string; limit: number }[];
-}
-
-const BudgetSchema = new Schema<IBudget>({
-  month: { type: Number, required: true },
-  year: { type: Number, required: true },
-  total: { type: Number, required: true },
-  categories: [
-    {
-      name: String,
-      limit: Number,
-    },
-  ],
+const budgetSchema = new mongoose.Schema({
+  month: String,
+  amount: Number,
 });
 
-export default model<IBudget>("Budget", BudgetSchema);
+export const Budget = mongoose.model("Budget", budgetSchema);

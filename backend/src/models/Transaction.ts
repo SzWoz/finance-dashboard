@@ -1,19 +1,10 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-export interface ITransaction {
-  description: string;
-  amount: number;
-  type: "income" | "expense";
-  category?: string;
-  date: Date;
-}
-
-const TransactionSchema = new Schema<ITransaction>({
-  description: { type: String, required: true },
-  amount: { type: Number, required: true },
+const transactionSchema = new mongoose.Schema({
+  amount: Number,
+  description: String,
   type: { type: String, enum: ["income", "expense"], required: true },
-  category: String,
-  date: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now },
 });
 
-export default model<ITransaction>("Transaction", TransactionSchema);
+export const Transaction = mongoose.model("Transaction", transactionSchema);

@@ -1,24 +1,23 @@
-import { Router } from "express";
-import Budget from "../models/Budget.js";
+import express from "express";
+import { Budget } from "../models/Budget";
 
-const router = Router();
+const router = express.Router();
 
-router.get("/", async (_req, res) => {
-  const budgets = await Budget.find();
-  res.json(budgets);
+// GET /api/budgets/:month
+router.get("/:month", async (req, res) => {
+  const budget = await Budget.findOne({ month: req.params.month });
+  res.json(budget);
 });
 
+// POST /api/budgets
 router.post("/", async (req, res) => {
-  const budget = new Budget(req.body);
-  await budget.save();
+  const { month, amount } = req.body;
+  const budget = await Budget.findOneAndUpdate(
+    { month },
+    { amount },
+    { upsert: true, new: true }
+  );
   res.status(201).json(budget);
-});
-
-router.put("/:id", async (req, res) => {
-  const updated = await Budget.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  res.json(updated);
 });
 
 export default router;

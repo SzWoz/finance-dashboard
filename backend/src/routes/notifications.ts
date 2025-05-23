@@ -1,25 +1,29 @@
-import { Router } from "express";
+import express from "express";
 import webpush from "web-push";
-import Subscription from "../models/Subscription.js";
 
-const router = Router();
+const router = express.Router();
 
-router.post("/subscribe", async (req, res) => {
-  const sub = new Subscription(req.body);
-  await sub.save();
-  res.status(201).json({});
+const subscriptions: webpush.PushSubscription[] = [];
+
+// POST /api/subscribe
+router.post("/subscribe", (req, res) => {
+  const subscription = req.body;
+  subscriptions.push(subscription);
+  res.status(201).json({ message: "Subscribed" });
 });
 
-export const sendNotification = async (title: string, body: string) => {
-  const subs = await Subscription.find();
-  const payload = JSON.stringify({ title, body });
-  for (const sub of subs) {
-    try {
-      await webpush.sendNotification(sub as any, payload);
-    } catch (err) {
-      console.error("Push error", err);
-    }
-  }
-};
+// POST /api/notify (do testu powiadomień)
+router.post("/notify", async (req, res) => {
+  const { title, body } = req.body;
+  await Promise.all(
+    subscriptions.map((sub) =>
+      webpush.sendNotification(
+        sub,
+        JSON.stringify({ title: title || "Hello", body: body || "World" })
+      )
+    )
+  );
+  res.json({ message: "Notifications sent" });
+});
 
 export default router;
