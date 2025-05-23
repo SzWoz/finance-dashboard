@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
-import { FinanceContext } from '../context/FinanceContext';
-import { PieChart, Pie, Tooltip, Cell } from 'recharts';
+import React, { useContext } from "react";
+import { FinanceContext } from "../context/FinanceContext";
+import { PieChart, Pie, Tooltip, Cell } from "recharts";
 
 export const Reports: React.FC = () => {
   const { state } = useContext(FinanceContext);
   const byCat = state.transactions
-    .filter((t) => t.type === 'expense')
+    .filter((t) => t.type === "expense")
     .reduce<Record<string, number>>((acc, t) => {
-      const key = t.category || 'Inne';
+      const key = t.category || "Inne";
       acc[key] = (acc[key] || 0) + t.amount;
       return acc;
     }, {});
@@ -18,7 +18,13 @@ export const Reports: React.FC = () => {
   return (
     <div className="flex justify-center">
       <PieChart width={320} height={320}>
-        <Pie dataKey="value" data={data} outerRadius={120} fill="#8884d8" label />
+        <Pie
+          dataKey="value"
+          data={data}
+          outerRadius={120}
+          fill="#8884d8"
+          label
+        />
         <Tooltip />
         {data.map((_, idx) => (
           <Cell key={idx} />
@@ -26,3 +32,4 @@ export const Reports: React.FC = () => {
       </PieChart>
     </div>
   );
+};

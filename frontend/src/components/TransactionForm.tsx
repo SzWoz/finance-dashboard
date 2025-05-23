@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { FinanceContext, Transaction } from "../context/FinanceContext";
+import { FinanceContext, type Transaction } from "../context/FinanceContext";
 
 const schema = z.object({
   description: z.string().min(1),
