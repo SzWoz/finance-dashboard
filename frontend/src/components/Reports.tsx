@@ -107,8 +107,8 @@ export const Reports: React.FC = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="Przychody" stackId="a" />
-            <Bar dataKey="Wydatki" stackId="a" />
+            <Bar dataKey="Przychody" fill="#34D399" />
+            <Bar dataKey="Wydatki" fill="#F87171" />
           </BarChart>
         </CardContent>
       </Card>
