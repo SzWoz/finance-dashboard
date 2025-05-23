@@ -24,7 +24,11 @@ export const BudgetForm: React.FC = () => {
   });
 
   const onSubmit = async (data: Form) => {
-    const res = await apiPost("/api/budgets", data);
+    const res = await apiPost("/api/budgets", {
+      month: data.month - 1,
+      year: data.year,
+      total: data.total,
+    });
     const budget = await res.json();
     dispatch({ type: "ADD_BUDGET", payload: budget });
     toast.success("Budżet zapisany");

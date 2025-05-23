@@ -11,7 +11,7 @@ import { subscribeUser } from "./utils/push";
 import { AuthProvider } from "./context/AuthContext";
 import { LoginForm } from "./components/LoginForm";
 import { RegisterForm } from "./components/RegisterForm";
-import { BudgetForm } from "./components/BudgetForm";
+import { BudgetsPage } from "./components/BudgetsPage";
 
 export const App: React.FC = () => {
   useEffect(() => {
@@ -37,7 +37,7 @@ export const App: React.FC = () => {
                 }
               />
               <Route path="/reports" element={<Reports />} />
-              <Route path="/budget" element={<BudgetForm />} />
+              <Route path="/budget" element={<BudgetsPage />} />
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
             </Routes>

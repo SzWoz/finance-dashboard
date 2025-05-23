@@ -1,5 +1,5 @@
-import { useApi } from "@/lib/api";
 import React, { createContext, useEffect, useReducer } from "react";
+import { useApi } from "@/lib/api";
 
 export interface Transaction {
   _id?: string;
@@ -10,18 +10,14 @@ export interface Transaction {
   date: string;
 }
 
-interface Budget {
+export interface Budget {
   _id?: string;
   month: number;
   year: number;
   total: number;
-  categories: { name: string; limit: number }[];
 }
 
-type State = {
-  transactions: Transaction[];
-  budgets: Budget[];
-};
+type State = { transactions: Transaction[]; budgets: Budget[] };
 
 type Action =
   | { type: "SET_TRANSACTIONS"; payload: Transaction[] }
@@ -43,7 +39,7 @@ function reducer(state: State, action: Action): State {
     case "SET_BUDGETS":
       return { ...state, budgets: action.payload };
     case "ADD_BUDGET":
-      return { ...state, budgets: [...state.budgets, action.payload] };
+      return { ...state, budgets: [action.payload, ...state.budgets] };
     default:
       return state;
   }
@@ -57,47 +53,16 @@ export const FinanceContext = createContext<{
 export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [state, dispatch] = useReducer(reducer, initialState, (init) => {
-    const persisted = localStorage.getItem("finance-state");
-    if (!persisted) return init;
-
-    try {
-      const parsed = JSON.parse(persisted);
-      return {
-        transactions: Array.isArray(parsed.transactions)
-          ? parsed.transactions
-          : [],
-        budgets: Array.isArray(parsed.budgets) ? parsed.budgets : [],
-      };
-    } catch (e) {
-      console.warn("Nieprawidłowe dane w localStorage:", e);
-      return init;
-    }
-  });
-
+  const [state, dispatch] = useReducer(reducer, initialState);
   const { apiGet } = useApi();
 
   useEffect(() => {
-    localStorage.setItem("finance-state", JSON.stringify(state));
-  }, [state]);
-
-  useEffect(() => {
-    apiGet("/api/transactions")
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          dispatch({ type: "SET_TRANSACTIONS", payload: data });
-        } else {
-          console.warn("Niepoprawne dane transakcji:", data);
-        }
-      });
-
-    apiGet("/api/budgets")
-      .then((r) => r.json())
-      .then((data) => {
-        const budgets = Array.isArray(data) ? data : data ? [data] : [];
-        dispatch({ type: "SET_BUDGETS", payload: budgets });
-      });
+    (async () => {
+      const t = await apiGet("/api/transactions").then((r) => r.json());
+      dispatch({ type: "SET_TRANSACTIONS", payload: t });
+      const b = await apiGet("/api/budgets").then((r) => r.json());
+      dispatch({ type: "SET_BUDGETS", payload: b });
+    })();
   }, []);
 
   return (

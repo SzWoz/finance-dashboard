@@ -1,30 +1,26 @@
 import express from "express";
 import { Budget } from "../models/Budget";
-import { auth } from "../middleware/auth";
+import { auth, AuthRequest } from "../middleware/auth";
 
 const router = express.Router();
-
 router.use(auth);
 
 // GET /api/budgets
-router.get("/", async (_req, res) => {
-  const budgets = await Budget.find();
+router.get("/", async (req: AuthRequest, res) => {
+  const budgets = await Budget.find({ user: req.userId }).sort({
+    year: -1,
+    month: -1,
+  });
   res.json(budgets);
 });
 
-// GET /api/budgets/:month
-router.get("/:month", async (req, res) => {
-  const budget = await Budget.findOne({ month: req.params.month });
-  res.json(budget);
-});
-
-// POST /api/budgets
-router.post("/", async (req, res) => {
-  const { month, amount } = req.body;
+// POST /api/budgets           { month, year, total }
+router.post("/", async (req: AuthRequest, res) => {
+  const { month, year, total } = req.body;
   const budget = await Budget.findOneAndUpdate(
-    { month },
-    { amount },
-    { upsert: true, new: true }
+    { user: req.userId, month, year },
+    { total },
+    { upsert: true, new: true, setDefaultsOnInsert: true }
   );
   res.status(201).json(budget);
 });
