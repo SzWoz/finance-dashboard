@@ -21,7 +21,7 @@ export const subscribeUser = async () => {
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(publicKey),
     });
-    await fetch(`${API_URL}/api/subscribe`, {
+    await fetch(`${API_URL}/api/notifications/subscribe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(sub),
