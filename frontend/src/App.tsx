@@ -10,6 +10,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { subscribeUser } from "./utils/push";
 import { AuthProvider } from "./context/AuthContext";
 import { LoginForm } from "./components/LoginForm";
+import { RegisterForm } from "./components/RegisterForm";
+import { BudgetForm } from "./components/BudgetForm";
 
 export const App: React.FC = () => {
   useEffect(() => {
@@ -35,7 +37,9 @@ export const App: React.FC = () => {
                 }
               />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/budget" element={<BudgetForm />} />
               <Route path="/login" element={<LoginForm />} />
+              <Route path="/register" element={<RegisterForm />} />
             </Routes>
           </Layout>
         </BrowserRouter>

@@ -1,34 +1,29 @@
 import React, { useContext } from "react";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useApi } from "@/lib/api";
+import { Button } from "@/components/ui/button";
 import { FinanceContext } from "@/context/FinanceContext";
+import { useApi } from "@/lib/api";
 import { toast } from "sonner";
 
 const schema = z.object({
-  month: z.string().regex(/^\d{4}-\d{2}$/, "Format RRRR-MM"),
-  amount: z.number().positive(),
+  month: z.number().min(1).max(12),
+  year: z.number().gte(2020),
+  total: z.number().positive(),
 });
-type FormData = z.infer<typeof schema>;
+type Form = z.infer<typeof schema>;
 
 export const BudgetForm: React.FC = () => {
-  const { apiPost } = useApi();
   const { dispatch } = useContext(FinanceContext);
-  const { register, handleSubmit, reset } = useForm<FormData>({
+  const { apiPost } = useApi();
+  const { register, handleSubmit, reset } = useForm<Form>({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: Form) => {
     const res = await apiPost("/api/budgets", data);
     const budget = await res.json();
     dispatch({ type: "ADD_BUDGET", payload: budget });
@@ -37,31 +32,31 @@ export const BudgetForm: React.FC = () => {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Ustaw budżet</Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Budżet miesięczny</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <Card>
+      <CardHeader>
+        <CardTitle>Ustaw budżet</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
           <Input
-            type="month"
-            {...register("month", { valueAsDate: false })}
-            placeholder="RRRR-MM"
+            type="number"
+            placeholder="Miesiąc (1-12)"
+            {...register("month", { valueAsNumber: true })}
+          />
+          <Input
+            type="number"
+            placeholder="Rok"
+            {...register("year", { valueAsNumber: true })}
           />
           <Input
             type="number"
             step="0.01"
             placeholder="Kwota"
-            {...register("amount", { valueAsNumber: true })}
+            {...register("total", { valueAsNumber: true })}
           />
-          <Button type="submit" className="w-full">
-            Zapisz
-          </Button>
+          <Button className="w-full">Zapisz</Button>
         </form>
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+    </Card>
   );
 };

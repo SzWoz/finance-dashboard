@@ -14,6 +14,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
   const links = [
     { to: "/", label: "Dashboard" },
     { to: "/reports", label: "Raporty" },
+    { to: "/budget", label: "Budżet" },
   ];
   return (
     <>

@@ -1,18 +1,17 @@
-import React, { createContext, useEffect, useState } from "react";
-import { apiPost } from "@/lib/api";
+import React, { createContext, useState, useEffect } from "react";
+import { API_URL } from "@/lib/api";
 
-interface AuthState {
+interface AuthCtx {
   token: string | null;
-}
-
-interface AuthContextProps extends AuthState {
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextProps>({
+export const AuthContext = createContext<AuthCtx>({
   token: null,
-  login: async () => false,
+  login: async () => {},
+  register: async () => {},
   logout: () => {},
 });
 
@@ -20,7 +19,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [token, setToken] = useState<string | null>(
-    () => localStorage.getItem("token") || null
+    localStorage.getItem("token")
   );
 
   useEffect(() => {
@@ -28,18 +27,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     else localStorage.removeItem("token");
   }, [token]);
 
-  const login = async (email: string, password: string) => {
-    const res = await apiPost("/api/auth/login", { email, password });
-    if (!res.ok) return false;
-    const { token } = await res.json();
-    setToken(token);
-    return true;
+  const authFetch = async (
+    path: string,
+    body: unknown
+  ): Promise<string | null> => {
+    const res = await fetch(`${API_URL}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error((await res.json()).message);
+    const { token: t } = await res.json();
+    return t;
   };
 
-  const logout = () => setToken(null);
-
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        token,
+        login: async (e, p) =>
+          setToken(
+            await authFetch("/api/auth/login", { email: e, password: p })
+          ),
+        register: async (e, p) =>
+          setToken(
+            await authFetch("/api/auth/register", { email: e, password: p })
+          ),
+        logout: () => setToken(null),
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

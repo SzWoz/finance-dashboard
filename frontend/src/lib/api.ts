@@ -6,18 +6,15 @@ export const API_URL = import.meta.env.VITE_API_URL;
 export const useApi = () => {
   const { token } = useContext(AuthContext);
 
-  const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
+  const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
 
   const apiGet = (path: string, init?: RequestInit) =>
-    fetch(`${API_URL}${path}`, {
-      headers: { ...authHeader, ...init?.headers },
-      ...init,
-    });
+    fetch(`${API_URL}${path}`, { ...init, headers });
 
   const apiPost = (path: string, body: unknown, init?: RequestInit) =>
     fetch(`${API_URL}${path}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...authHeader },
+      headers: { "Content-Type": "application/json", ...headers },
       body: JSON.stringify(body),
       ...init,
     });
