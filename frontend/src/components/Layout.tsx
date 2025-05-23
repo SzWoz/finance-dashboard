@@ -4,10 +4,13 @@ import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { AuthContext } from "@/context/AuthContext";
+import { useContext } from "react";
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { token, logout } = useContext(AuthContext);
   const links = [
     { to: "/", label: "Dashboard" },
     { to: "/reports", label: "Raporty" },
@@ -38,6 +41,15 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
 
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            {token ? (
+              <Button variant="ghost" onClick={logout}>
+                Wyloguj
+              </Button>
+            ) : (
+              <Link to="/login">
+                <Button variant="ghost">Logowanie</Button>
+              </Link>
+            )}
             <Sheet>
               <SheetTrigger asChild className="sm:hidden">
                 <Button size="icon" variant="ghost">

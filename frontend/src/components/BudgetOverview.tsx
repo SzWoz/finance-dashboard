@@ -8,6 +8,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { BudgetForm } from "./BudgetForm";
 
 export const BudgetOverview: React.FC = () => {
   const { state } = useContext(FinanceContext);
@@ -28,6 +29,9 @@ export const BudgetOverview: React.FC = () => {
       <Card>
         <CardContent className="p-4 text-center text-sm text-muted-foreground">
           Brak budżetu na bieżący miesiąc.
+          <div className="mt-4">
+            <BudgetForm />
+          </div>
         </CardContent>
       </Card>
     );
@@ -51,6 +55,9 @@ export const BudgetOverview: React.FC = () => {
           Pozostało: {remaining.toFixed(2)} zł
         </p>
       </CardContent>
+      <div className="p-4">
+        <BudgetForm />
+      </div>
     </Card>
   );
 };

@@ -1,8 +1,12 @@
 import express from "express";
 import { Budget } from "../models/Budget";
+import { auth } from "../middleware/auth";
 
 const router = express.Router();
 
+router.use(auth);
+
+// GET /api/budgets
 router.get("/", async (_req, res) => {
   const budgets = await Budget.find();
   res.json(budgets);

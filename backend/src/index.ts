@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import webpush from "web-push";
+import authRoutes from "./routes/auth";
 import { connectDB } from "./db";
 import transactionRoutes from "./routes/transactions";
 import budgetRoutes from "./routes/budgets";
@@ -28,6 +29,7 @@ connectDB().then(() => {
   app.use("/api/transactions", transactionRoutes);
   app.use("/api/budgets", budgetRoutes);
   app.use("/api/notifications", notificationRoutes);
+  app.use("/api/auth", authRoutes);
 
   const PORT = process.env.PORT || 4000;
   app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
