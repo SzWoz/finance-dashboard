@@ -1,14 +1,40 @@
-import "./App.css";
-import { AppRouter } from "./router";
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { FinanceProvider } from "./context/FinanceContext";
+import { TransactionForm } from "./components/TransactionForm";
+import { TransactionList } from "./components/TransactionList";
+import { BudgetOverview } from "./components/BudgetOverview";
+import { Reports } from "./components/Reports";
+import { subscribeUser } from "./utils/push";
 
-function App() {
+export const App: React.FC = () => {
+  useEffect(() => {
+    subscribeUser();
+  }, []);
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-1 p-4">
-        <AppRouter />
-      </main>
-    </div>
+    <FinanceProvider>
+      <BrowserRouter>
+        <nav className="flex gap-4 p-4 bg-gray-100">
+          <Link to="/">Dashboard</Link>
+          <Link to="/reports">Raporty</Link>
+        </nav>
+        <main className="p-4 space-y-4">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <TransactionForm />
+                  <BudgetOverview />
+                  <TransactionList />
+                </>
+              }
+            />
+            <Route path="/reports" element={<Reports />} />
+          </Routes>
+        </main>
+      </BrowserRouter>
+    </FinanceProvider>
   );
-}
-
-export default App;
+};

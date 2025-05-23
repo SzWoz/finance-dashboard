@@ -1,13 +1,19 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { App } from "./App";
 import "./index.css";
-import App from "./App.tsx";
-import { BrowserRouter } from "react-router-dom";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>
-);
+ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
+
+serviceWorkerRegistration.register();
+
+export function register() {
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .catch((err) => console.error("SW error", err));
+    });
+  }
+}
