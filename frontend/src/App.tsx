@@ -30,7 +30,7 @@ export const App: React.FC = () => {
   );
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden  ">
       <AuthProvider>
         <FinanceProvider>
           <BrowserRouter>
