@@ -1,15 +1,23 @@
 /// <reference lib="webworker" />
 declare const self: ServiceWorkerGlobalScope;
 
-self.addEventListener("push", (event) => {
-  const pushEvent = event as PushEvent;
-  const data = pushEvent.data?.json() ?? {};
+self.addEventListener("push", (e) => {
+  const event = e as PushEvent;
+  let data: { title?: string; body?: string } = {};
 
-  pushEvent.waitUntil(
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch {
+      data = { body: event.data.text() };
+    }
+  }
+
+  event.waitUntil(
     self.registration.showNotification(data.title || "Nowe powiadomienie", {
       body: data.body || "Kliknij, by zobaczyć więcej",
-      icon: "/icons/icon-192.png",
-      badge: "/icons/icon-192.png",
+      // icon: "/icons/icon-192.png",
+      // badge: "/icons/icon-192.png",
     })
   );
 });
