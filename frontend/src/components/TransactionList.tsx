@@ -9,11 +9,11 @@ export const TransactionList: React.FC = () => {
   const { state } = useContext(FinanceContext);
 
   return (
-    <Card className="h-fit">
+    <Card className="h-full">
       <CardHeader>
         <CardTitle>Historia transakcji</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 max-h-[70vh] overflow-auto pr-2">
+      <CardContent className="space-y-4 h-full overflow-auto pr-2">
         {state.transactions.length === 0 && (
           <p className="text-sm text-muted-foreground">
             Brak dodanych transakcji.

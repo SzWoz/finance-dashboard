@@ -19,9 +19,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
     { to: "/budget", label: "Budżet" },
   ];
   return (
-    <>
-      <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center justify-between">
+    <div className="h-full">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 h-fit">
+        <div className="flex h-14 items-center justify-between">
           <Link to="/" className="font-semibold tracking-tight">
             💸 FinTrack
           </Link>
@@ -87,9 +87,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
         </div>
       </header>
 
-      <main className="container py-6 flex flex-col justify-center items-center">
+      <main className="block overflow-y-scroll py-6 flex-col justify-center items-center h-[calc(100vh-3.5rem)]">
         {children}
       </main>
-    </>
+    </div>
   );
 };

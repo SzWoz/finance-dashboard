@@ -35,7 +35,7 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    <Card className="min-w-[28rem] m-0">
+    <Card className="min-w-[28rem] max-w-[48rem] mx-auto">
       <CardHeader>
         <CardTitle>Logowanie</CardTitle>
       </CardHeader>
