@@ -12,7 +12,7 @@ export default defineConfig({
       /* --- kluczowe zmiany --- */
       strategies: "injectManifest",
       srcDir: "src", // katalog, w którym trzymasz SW
-      filename: "sw-custom.ts", // nazwa pliku SW (może być .ts)
+      filename: "sw-custom.js", // nazwa pliku SW (może być .ts)
       /* ----------------------- */
 
       /* przydatne w czasie developmentu */
