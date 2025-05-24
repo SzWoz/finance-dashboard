@@ -6,11 +6,13 @@ import { Menu } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { AuthContext } from "@/context/AuthContext";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { token, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
   const links = [
     { to: "/", label: "Dashboard" },
     { to: "/reports", label: "Raporty" },
@@ -43,7 +45,13 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
           <div className="flex items-center gap-2">
             <ThemeToggle />
             {token ? (
-              <Button variant="ghost" onClick={logout}>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  logout();
+                  navigate("/login", { replace: true });
+                }}
+              >
                 Wyloguj
               </Button>
             ) : (
@@ -79,7 +87,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
         </div>
       </header>
 
-      <main className="container py-6">{children}</main>
+      <main className="container py-6 flex flex-col justify-center items-center">
+        {children}
+      </main>
     </>
   );
 };

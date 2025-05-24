@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { Link, useNavigate } from "react-router-dom";
 
 const schema = z
   .object({
@@ -22,6 +23,7 @@ type Form = z.infer<typeof schema>;
 
 export const RegisterForm: React.FC = () => {
   const { register: registerUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   const { register, handleSubmit, formState } = useForm<Form>({
     resolver: zodResolver(schema),
   });
@@ -30,13 +32,14 @@ export const RegisterForm: React.FC = () => {
     try {
       await registerUser(data.email, data.password);
       toast.success("Rejestracja udana");
+      navigate("/", { replace: true });
     } catch (e: any) {
       toast.error(e.message);
     }
   };
 
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card className="min-w-[28rem] m-0">
       <CardHeader>
         <CardTitle>Rejestracja</CardTitle>
       </CardHeader>
@@ -63,6 +66,12 @@ export const RegisterForm: React.FC = () => {
           <Button className="w-full" type="submit">
             Zarejestruj
           </Button>
+          <p className="mt-2 text-center text-sm">
+            Masz już konto?{" "}
+            <Link to="/login" className="text-primary hover:underline">
+              Zaloguj się
+            </Link>
+          </p>
         </form>
       </CardContent>
     </Card>

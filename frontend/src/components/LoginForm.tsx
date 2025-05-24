@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AuthContext } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const schema = z.object({
   email: z.string().email(),
@@ -16,6 +17,9 @@ type Form = z.infer<typeof schema>;
 
 export const LoginForm: React.FC = () => {
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as any)?.from?.pathname || "/";
   const { register, handleSubmit } = useForm<Form>({
     resolver: zodResolver(schema),
   });
@@ -23,6 +27,7 @@ export const LoginForm: React.FC = () => {
   const onSubmit = async (data: Form) => {
     try {
       await login(data.email, data.password);
+      navigate(from, { replace: true });
       toast.success("Zalogowano");
     } catch (e: any) {
       toast.error(e.message);
@@ -30,7 +35,7 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card className="min-w-[28rem] m-0">
       <CardHeader>
         <CardTitle>Logowanie</CardTitle>
       </CardHeader>
@@ -45,6 +50,12 @@ export const LoginForm: React.FC = () => {
           <Button className="w-full" type="submit">
             Zaloguj
           </Button>
+          <p className="mt-2 text-center text-sm">
+            Nie masz konta?{" "}
+            <Link to="/register" className="text-primary hover:underline">
+              Zarejestruj się
+            </Link>
+          </p>
         </form>
       </CardContent>
     </Card>
